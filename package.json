@@ -1,0 +1,21 @@
+{
+  "name": "pdf-editor",
+  "version": "1.0.0",
+  "description": "An Electron app for editing PDF files: open or create PDFs, drag-and-drop to insert pages, reorder and delete pages, with a thumbnail preview sidebar.",
+  "main": "src/main.js",
+  "scripts": {
+    "build": "node build.js",
+    "start": "npm run build && electron .",
+    "dev": "npm run build && electron ."
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^4.10.38"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "esbuild": "^0.24.2"
+  }
+}

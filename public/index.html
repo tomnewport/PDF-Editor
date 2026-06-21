@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:;" />
+    <title>PDF Editor</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="toolbar">
+      <button id="btn-new" title="New (Ctrl/Cmd+N)">New</button>
+      <button id="btn-open" title="Open (Ctrl/Cmd+O)">Open</button>
+      <button id="btn-save" title="Save (Ctrl/Cmd+S)">Save</button>
+      <button id="btn-save-as" title="Save As (Ctrl/Cmd+Shift+S)">Save As</button>
+      <span class="spacer"></span>
+      <span id="status">No document</span>
+    </div>
+
+    <div id="main">
+      <aside id="sidebar" aria-label="Page thumbnails">
+        <div id="thumb-list">
+          <div id="drop-indicator" class="hidden"></div>
+        </div>
+        <div id="sidebar-empty" class="empty-hint">No pages</div>
+      </aside>
+
+      <section id="viewer">
+        <div id="page-stage">
+          <canvas id="page-canvas"></canvas>
+        </div>
+        <div id="viewer-empty" class="empty-hint big">
+          <p>This document has no pages.</p>
+          <p>Drag a PDF here, or use <strong>Open</strong> to load one.</p>
+        </div>
+        <div id="page-indicator"></div>
+      </section>
+    </div>
+
+    <!-- Drag overlay shown while dragging an external PDF over the window -->
+    <div id="drag-overlay" class="hidden"><span>Drop PDF to add pages</span></div>
+
+    <!-- Context menu -->
+    <div id="context-menu" class="hidden">
+      <div class="ctx-item" data-action="delete">Delete page(s)</div>
+      <div class="ctx-item" data-action="select-all">Select all pages</div>
+    </div>
+
+    <!-- Insert dialog -->
+    <div id="dialog-overlay" class="hidden">
+      <div id="dialog">
+        <h2 id="dlg-title">Add pages</h2>
+        <p id="dlg-subtitle" class="muted"></p>
+
+        <fieldset>
+          <legend>Which pages?</legend>
+          <label class="radio">
+            <input type="radio" name="pages" value="all" checked />
+            <span id="dlg-all-label">Entire document</span>
+          </label>
+          <label class="radio">
+            <input type="radio" name="pages" value="range" />
+            <span>Selected pages:</span>
+          </label>
+          <input type="text" id="dlg-range" placeholder="e.g. 1-3, 5, 8-10" disabled />
+          <div id="dlg-range-error" class="error hidden"></div>
+        </fieldset>
+
+        <fieldset id="dlg-position-fieldset">
+          <legend>Insert position</legend>
+          <label class="radio" id="dlg-pos-drop-wrap">
+            <input type="radio" name="position" value="drop" />
+            <span id="dlg-pos-drop-label">At drop position</span>
+          </label>
+          <label class="radio">
+            <input type="radio" name="position" value="before" />
+            <span id="dlg-pos-before-label">Before current page</span>
+          </label>
+          <label class="radio">
+            <input type="radio" name="position" value="after" checked />
+            <span id="dlg-pos-after-label">After current page</span>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Section name (optional)</legend>
+          <input type="text" id="dlg-name" placeholder="Adds a bookmark in the document outline" />
+        </fieldset>
+
+        <div class="dialog-buttons">
+          <button id="dlg-cancel" class="secondary">Cancel</button>
+          <button id="dlg-confirm" class="primary">Add pages</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="renderer.js"></script>
+  </body>
+</html>
