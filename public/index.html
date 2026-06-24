@@ -4,18 +4,32 @@
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Security-Policy"
           content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:;" />
-    <title>PDF Editor</title>
+    <title>PDF Workbench</title>
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icon.png" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div id="toolbar">
-      <button id="btn-new" title="New (Ctrl/Cmd+N)">New</button>
-      <button id="btn-open" title="Open (Ctrl/Cmd+O)">Open</button>
-      <button id="btn-save" title="Save (Ctrl/Cmd+S)">Save</button>
-      <button id="btn-save-as" title="Save As (Ctrl/Cmd+Shift+S)">Save As</button>
+      <div id="document-tools" class="toolbar-group" role="toolbar" aria-label="Document tools">
+        <button id="toolbar-new" type="button" title="New">New</button>
+        <button id="toolbar-open" type="button" title="Open">Open</button>
+        <button id="toolbar-save" type="button" title="Save">Save</button>
+      </div>
+      <div id="edit-tools" class="toolbar-group" role="toolbar" aria-label="Editing tools">
+        <button id="toolbar-table-export" type="button" title="Export detected table to Excel">Export Table</button>
+        <button id="toolbar-comment" type="button" title="Add comment">Comment</button>
+        <button id="toolbar-redact" type="button" title="Redact">Redact</button>
+      </div>
+      <div id="redaction-tools" class="hidden" role="toolbar" aria-label="Pending redactions">
+        <button id="redaction-apply" class="dangerish" type="button" title="Apply permanent redactions">Apply redactions</button>
+        <span id="redaction-count"></span>
+      </div>
       <span class="spacer"></span>
       <span id="status">No document</span>
     </div>
+
+    <div id="tabbar" aria-label="Open documents"></div>
 
     <div id="main">
       <aside id="sidebar" aria-label="Page thumbnails">
@@ -27,7 +41,7 @@
 
       <section id="viewer">
         <div id="page-stage">
-          <canvas id="page-canvas"></canvas>
+          <div id="page-stack"></div>
         </div>
         <div id="viewer-empty" class="empty-hint big">
           <p>This document has no pages.</p>
@@ -35,13 +49,34 @@
         </div>
         <div id="page-indicator"></div>
       </section>
+
+      <aside id="review-pane" aria-label="PDF review findings">
+        <div class="review-header">
+          <div>
+            <h2>Review</h2>
+            <p id="review-summary">No findings yet</p>
+          </div>
+          <div class="review-header-actions">
+            <button id="review-add-comment" class="secondary compact" type="button">Add</button>
+            <button id="review-rescan" class="secondary compact" type="button">Rescan</button>
+          </div>
+        </div>
+        <div id="review-list"></div>
+        <details id="review-ignored">
+          <summary>Ignored <span id="review-ignored-count">0</span></summary>
+          <div id="review-ignored-list"></div>
+        </details>
+      </aside>
     </div>
 
     <!-- Drag overlay shown while dragging an external PDF over the window -->
     <div id="drag-overlay" class="hidden"><span>Drop PDF to add pages</span></div>
+    <div id="viewer-drop-indicator" class="hidden" aria-hidden="true"></div>
+    <div id="sidebar-scroll-indicator" class="hidden" aria-hidden="true"></div>
 
     <!-- Context menu -->
     <div id="context-menu" class="hidden">
+      <div class="ctx-item" data-action="add-comment">Add comment here</div>
       <div class="ctx-item" data-action="delete">Delete page(s)</div>
       <div class="ctx-item" data-action="select-all">Select all pages</div>
     </div>
@@ -64,6 +99,15 @@
           </label>
           <input type="text" id="dlg-range" placeholder="e.g. 1-3, 5, 8-10" disabled />
           <div id="dlg-range-error" class="error hidden"></div>
+          <div id="dlg-page-preview" class="hidden">
+            <div class="preview-toolbar">
+              <span id="dlg-preview-status">No pages selected</span>
+              <span class="spacer"></span>
+              <button id="dlg-preview-all" type="button" class="secondary compact">All</button>
+              <button id="dlg-preview-clear" type="button" class="secondary compact">Clear</button>
+            </div>
+            <div id="dlg-preview-grid" aria-label="Source PDF pages"></div>
+          </div>
         </fieldset>
 
         <fieldset id="dlg-position-fieldset">
@@ -90,6 +134,59 @@
         <div class="dialog-buttons">
           <button id="dlg-cancel" class="secondary">Cancel</button>
           <button id="dlg-confirm" class="primary">Add pages</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comment dialog -->
+    <div id="comment-dialog-overlay" class="hidden">
+      <div id="comment-dialog" role="dialog" aria-modal="true" aria-labelledby="comment-dlg-title">
+        <h2 id="comment-dlg-title">Add comment</h2>
+        <label>
+          <span>Author</span>
+          <input id="comment-author" type="text" autocomplete="name" />
+        </label>
+        <label>
+          <span>Comment</span>
+          <textarea id="comment-text" rows="5"></textarea>
+        </label>
+        <div id="comment-error" class="error hidden"></div>
+        <div class="dialog-buttons">
+          <button id="comment-cancel" class="secondary" type="button">Cancel</button>
+          <button id="comment-confirm" class="primary" type="button">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table export dialog -->
+    <div id="table-dialog-overlay" class="hidden">
+      <div id="table-dialog" role="dialog" aria-modal="true" aria-labelledby="table-dlg-title">
+        <div class="table-dialog-header">
+          <div>
+            <h2 id="table-dlg-title">Export table</h2>
+            <p id="table-summary" class="muted"></p>
+          </div>
+          <label class="table-header-toggle">
+            <input id="table-first-row-header" type="checkbox" checked />
+            <span>Header row</span>
+          </label>
+        </div>
+
+        <div class="table-controls" role="toolbar" aria-label="Table editing">
+          <button id="table-add-row" type="button" class="secondary compact">Add row</button>
+          <button id="table-remove-row" type="button" class="secondary compact">Remove row</button>
+          <button id="table-add-column" type="button" class="secondary compact">Add column</button>
+          <button id="table-remove-column" type="button" class="secondary compact">Remove column</button>
+        </div>
+
+        <div id="table-grid-wrap" aria-label="Detected table preview">
+          <table id="table-grid"></table>
+        </div>
+
+        <div id="table-error" class="error hidden"></div>
+        <div class="dialog-buttons">
+          <button id="table-cancel" class="secondary" type="button">Cancel</button>
+          <button id="table-export" class="primary" type="button">Export .xlsx</button>
         </div>
       </div>
     </div>

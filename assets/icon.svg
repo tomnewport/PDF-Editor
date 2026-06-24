@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="PDF Workbench app icon">
+  <defs>
+    <linearGradient id="bg" x1="164" y1="128" x2="860" y2="896" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#172033"/>
+      <stop offset="0.55" stop-color="#245c79"/>
+      <stop offset="1" stop-color="#21a690"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="304" y1="168" x2="724" y2="824" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e8edf3"/>
+    </linearGradient>
+    <linearGradient id="fold" x1="632" y1="188" x2="764" y2="320" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#d8eef8"/>
+      <stop offset="1" stop-color="#a9d7e8"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#07111f" flood-opacity="0.34"/>
+    </filter>
+    <filter id="soft" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#07111f" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <rect x="72" y="72" width="880" height="880" rx="206" fill="#1f6f8b"/>
+  <path d="M198 768c126 92 306 118 470 60 96-34 174-94 226-169v87c0 82-66 148-148 148H278c-33 0-62-11-85-29-42-33-54-71-54-71 12-8 30-18 59-26z" fill="#f59e0b" opacity="0.18"/>
+
+  <g filter="url(#shadow)">
+    <path d="M319 163h318l140 142v512c0 37-30 67-67 67H319c-37 0-67-30-67-67V230c0-37 30-67 67-67z" fill="#0b1220" opacity="0.18"/>
+    <path d="M299 139h330l146 148v506c0 40-32 72-72 72H299c-40 0-72-32-72-72V211c0-40 32-72 72-72z" fill="#f8fafc"/>
+    <path d="M626 140v116c0 34 28 62 62 62h87L626 140z" fill="#b9e0ed"/>
+    <path d="M626 140v116c0 34 28 62 62 62h87" fill="none" stroke="#91c3d8" stroke-width="10" stroke-linejoin="round" opacity="0.8"/>
+  </g>
+
+  <g filter="url(#soft)">
+    <rect x="290" y="286" width="122" height="392" rx="24" fill="#1f2937"/>
+    <rect x="319" y="326" width="64" height="52" rx="10" fill="#38bdf8"/>
+    <rect x="319" y="414" width="64" height="52" rx="10" fill="#34d399"/>
+    <rect x="319" y="502" width="64" height="52" rx="10" fill="#f59e0b"/>
+    <rect x="319" y="590" width="64" height="52" rx="10" fill="#fb7185"/>
+  </g>
+
+  <path d="M465 350h204" stroke="#243247" stroke-width="28" stroke-linecap="round"/>
+  <path d="M465 426h168" stroke="#8ea2b5" stroke-width="22" stroke-linecap="round"/>
+  <path d="M465 494h204" stroke="#8ea2b5" stroke-width="22" stroke-linecap="round"/>
+  <path d="M465 562h134" stroke="#8ea2b5" stroke-width="22" stroke-linecap="round"/>
+
+  <rect x="414" y="640" width="296" height="118" rx="28" fill="#172033"/>
+  <text x="562" y="724" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="82" font-weight="800" fill="#ffffff">PDF</text>
+</svg>

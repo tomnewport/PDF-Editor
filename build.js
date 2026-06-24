@@ -12,6 +12,16 @@ function copy(from, to) {
   console.log(`copied ${path.relative(root, from)} -> ${path.relative(root, to)}`);
 }
 
+function copyDir(from, to) {
+  fs.mkdirSync(to, { recursive: true });
+  for (const entry of fs.readdirSync(from, { withFileTypes: true })) {
+    const src = path.join(from, entry.name);
+    const dest = path.join(to, entry.name);
+    if (entry.isDirectory()) copyDir(src, dest);
+    else copy(src, dest);
+  }
+}
+
 async function main() {
   fs.mkdirSync(dist, { recursive: true });
 
@@ -29,11 +39,21 @@ async function main() {
   // Static assets
   copy(path.join(root, 'public', 'index.html'), path.join(dist, 'index.html'));
   copy(path.join(root, 'public', 'styles.css'), path.join(dist, 'styles.css'));
+  copy(path.join(root, 'assets', 'icon.svg'), path.join(dist, 'icon.svg'));
+  copy(path.join(root, 'assets', 'icon.png'), path.join(dist, 'icon.png'));
 
   // pdf.js worker (loaded as a module worker at runtime)
   copy(
     path.join(root, 'node_modules', 'pdfjs-dist', 'build', 'pdf.worker.min.mjs'),
     path.join(dist, 'pdf.worker.min.mjs')
+  );
+  copyDir(
+    path.join(root, 'node_modules', 'pdfjs-dist', 'standard_fonts'),
+    path.join(dist, 'standard_fonts')
+  );
+  copyDir(
+    path.join(root, 'node_modules', 'pdfjs-dist', 'web', 'images'),
+    path.join(dist, 'images')
   );
 
   console.log('build complete');

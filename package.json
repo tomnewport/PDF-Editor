@@ -1,5 +1,6 @@
 {
   "name": "pdf-editor",
+  "productName": "PDF Workbench",
   "version": "1.0.0",
   "description": "An Electron app for editing PDF files: open or create PDFs, drag-and-drop to insert pages, reorder and delete pages, with a thumbnail preview sidebar.",
   "main": "src/main.js",
