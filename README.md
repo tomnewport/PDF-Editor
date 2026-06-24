@@ -4,6 +4,23 @@ A desktop (Electron) app for assembling and editing PDF files. Open an existing
 PDF or start a new, empty one, then build it up by dragging other PDFs in, and
 reorder or remove pages with a live thumbnail preview.
 
+## Download
+
+Pre-built installers are published on the
+[**latest release**](https://github.com/tomnewport/PDF-Editor/releases/latest)
+page:
+
+| Platform | File |
+| -------- | ---- |
+| Windows  | `.exe` installer (NSIS) |
+| macOS    | `.dmg` |
+| Linux    | `.AppImage` or `.deb` |
+
+Installers are built and published automatically by
+[GitHub Actions](.github/workflows/release.yml) whenever a version tag (`v*`) is
+pushed. The macOS and Windows builds are unsigned, so you may need to approve
+them past Gatekeeper / SmartScreen on first launch.
+
 ## Features
 
 - **Open or create** PDFs. A new document starts empty (zero pages).

@@ -7,16 +7,61 @@
   "scripts": {
     "build": "node build.js",
     "start": "npm run build && electron .",
-    "dev": "npm run build && electron ."
+    "dev": "npm run build && electron .",
+    "dist": "npm run build && electron-builder"
   },
-  "author": "",
+  "author": "tomnewport <tom.newport@gmail.com>",
   "license": "MIT",
+  "homepage": "https://github.com/tomnewport/PDF-Editor",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tomnewport/PDF-Editor.git"
+  },
   "dependencies": {
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^4.10.38"
   },
   "devDependencies": {
     "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
     "esbuild": "^0.24.2"
+  },
+  "build": {
+    "appId": "com.tomnewport.pdfworkbench",
+    "productName": "PDF Workbench",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Office",
+      "maintainer": "tomnewport <tom.newport@gmail.com>"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.productivity"
+    }
   }
 }
